@@ -29,76 +29,54 @@ Algebra(3,0,1,()=>{
   }).join(' ');
 
 
-  const [Anx, Any, Anz] = [xAxis, yAxis, zAxis].map((axis) => proj(An, axis));
+  const Anx = () => proj(An, xAxis);
+  const An0y = () => proj(An, y0plane);
   const [Bnx, Bny, Bnz] = [xAxis, yAxis, zAxis].map((axis) => proj(Bn, axis));
-  const Bn0y = proj(Bn, y0plane);
-  // const An0y = proj(An, y0plane);
-  const [An0x, An0y, An0z] = [x0plane, y0plane, z0plane].map((p) => proj(An, p));
 
   const ob = () => O & B;
-  const projAnOb = () => proj(An, ob);
-  const P = projAnOb;
-  const planeObvertical = () => ob & proj(Bn, y0plane);
-  const planeAnPerpOb = () => ob << An;
-  const linePPerpOb = () => planeAnPerpOb ^ planeObvertical;
-  const AnOBv = () => proj(An, O & Bn & Bn0y);
-  const AnOBv0y = () => proj(AnOBv, y0plane);
-  const P1 = () => proj(AnOBv0y, ob);
-const T1top = parall(ob, Any) ^ rej(P1, (O&Bn0y));
-  const corner1 = proj(AnOBv0y, linePPerpOb);
-  const lineAn0yPerpOb = () => An0y & AnOBv0y;
 
-  const corner2 = proj(Anx, lineAn0yPerpOb);
-  const AnxOB0y = () => proj(Anx, O & Bn0y);
-  const P2 = proj(AnxOB0y, ob);
-  const planeAzPllOBvert = parall(O & Bn0y & B, Anz);
-  const T2top0y = () => planeAzPllOBvert ^ (An0y & corner2);
-  const planeP2T2Top = () => P2 & AnxOB0y & T2top0y;
-  const T2top = () => planeAzPllOBvert ^ (Anz & ob) ^ planeP2T2Top;
-  const liftedCorner2 = () => proj(T2top,ob & Bn0y);
+  const projx = proj(Anx, ob);
+  const topz = () => parall(Anx & proj(Anx,ob), An0y) ^ (zAxis & Bn);
+  const projz = proj(An0y, ob);
+  const topy =  () => parall(An0y & projz, An) ^ (yAxis & Bn);
+  const projy = proj(An, ob);
   return this.graph(()=>{
 
     return [
       `Drag A or B`,
-      0xFFCCFF, [O, Bn, Bnx],
-      0xDDFFCC, [O, Bn, Bnz],
-      0xCCFFFF, [O, Bn, Bny],
+      // light grey lines
       0xAABBBB,
       xAxis, 'x',  yAxis, 'y', zAxis, 'z',
-      0x000000,
-      O, 'O',  An, "An", Bn, "Bn",
+      // light grey surfaces
+      0xDDDDDD, [projz,topz,An0y], [projy,topy,An],
+      // magenta surfaces
+      0xFFCCFF, [O, Bn, Bnx], [O, Anx, projx],
+      // green surfaces
+      0xDDFFCC, [O, Bn, Bnz], [projz, projx, topz],
+      // blue surfaces
+      0xCCFFFF, [O, Bn, Bny], [projz, projy, topy],
       0xFFAAAA,// light pink
+      // grey lines
       0x888888,
-      //[An,An0y],
-      [An,P], //[An, AnOBv],
-      [O, Bn0y], [ Bn, Bn0y],
-      //[AnOBv, AnOBv0y],
-      [AnOBv0y, P1],
-      //[AnOBv0y,corner1], [AnOBv,corner1],
-      // [An0y, An],
-      [An, An0z], [An0z, Anx],[Any, An0z], [Any, O],
-      [An0y, AnOBv0y],//[Anx, corner2],[corner2, An0y],
-      [An, An0x],[An0x, Anz], [An0x, Any],
-      [Anx, AnxOB0y], [AnxOB0y, P2],
-      [O, Anz],
-      [O, Bnx], [Bnx, Bn],
-      [O, Bny], [Bny, Bn],
-      [O, Bnz], [Bnz, Bn],
-      [Anz, T2top0y],[T2top0y, An0y],//[An0y, Anz],
-      [T2top0y, AnxOB0y],
-      [T2top, T2top0y],
-      [Any, T1top],
-      //[P2, liftedCorner2], [liftedCorner2, T2top],
+      [Anx, An0y], [An0y, projz],
+      [An0y, topz],
+      [An0y, An], [An, projy],
+      [An, topy],
       0x000000, [O,  An], [O,  A], [O,  B],[O,  Bn],
+      // blue lines
       0x00DDDD,
-      //[AnOBv, AnOBv0y], [AnOBv0y, corner1],[corner1, AnOBv],
-      [P, P1],[P1, T1top],[T1top,P],
-      0xFF00FF,
-      [O, Anx], [Anx, P2],[P2,O],
-      0x11EE00,
-      [P1,P2], [P2, T2top], [T2top, P1],
+      [projz, projy], [projy, topy], [topy, projz],
+      [Bn, Bny], [Bny, O],
+      0xFF00FF, //magenta
+      [O, Anx], [Anx, projx],[projx,O],
+      [Bn, Bnx], [Bnx, O],
+      0x11EE00, //green
+      [projz, projx], [projx, topz], [topz, projz],
+      [Bn, Bnz], [Bnz, O],
+      // black points
+      0x000000, O, 'O',  An, "An", Bn, "Bn",
+      // blue points
       0x224488, A,"A",B,"B",
-      0x8884400, P, 'P'
     ]
   },{
     grid        : true, // Display a grid
