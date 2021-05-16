@@ -1,0 +1,11 @@
+{
+  "name": "ganjatest",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "ganja.js": "^1.0.173"
+  },
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
